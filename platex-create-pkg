@@ -26,7 +26,7 @@ bootstrap_makefile() {
         echo ">> the original makefile copyright is under Tom Bobach"
         wget -q $LATEX_TEMPLATE_URI -P /tmp
         tar xjf /tmp/LaTeXTemplate.tar.bz2 -C /tmp
-        cp /tmp/latextemplate/Makefile $ORG_MAKEFILE_PATH
+        cp /tmp/LaTeXTemplate/Makefile $ORG_MAKEFILE_PATH
         #cp $ORG_MAKEFILE_PATH $MAKEFILE_PATH
     fi
     if [ ! -e $MAKEFILE_PATH ]; then
