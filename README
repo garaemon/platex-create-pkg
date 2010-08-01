@@ -1,0 +1,9 @@
+please add platex-create-pkg directory to your PATH.
+<pre>
+$ export PATH=$PATH:/path-to-platex-create-pkg
+</pre>
+
+and just type platex-create-pkg!
+<pre>
+$ platex-create-pkg your-awesome-paper
+</pre>
