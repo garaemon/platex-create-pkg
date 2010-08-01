@@ -24,6 +24,7 @@ bootstrap_makefile() {
         wget -q $LATEX_TEMPLATE_URI -P /tmp
         tar xvjf /tmp/LaTeXTemplate.tar.bz2 -C /tmp
         cp /tmp/latextemplate/Makefile $ORG_MAKEFILE_PATH
+        cp $ORG_MAKEFILE_PATH $MAKEFILE_PATH
     fi
     if [ ! -e $MAKEFILE_PATH ]; then
         patch -p0 -d $BASE < ${MAKEFILE_PATCH_PATH}
