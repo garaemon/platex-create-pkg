@@ -16,20 +16,35 @@ ORG_MAKEFILE_PATH=$BASE/Makefile.org
 MAKEFILE_PATCH_PATH=$BASE/Makefile.patch
 MAKEFILE_PATH=$BASE/Makefile.patched
 LATEX_TEMPLATE_URI=http://www-umlauf.informatik.uni-kl.de/~bobach/work/misc/LaTeXTemplate.tar.bz2
+TEX_TEMPLATE=$BASE/template.tex
+BIB_TEMPLATE=$BASE/template.bib
+NOWPRINTING=$BASE/nowprinting.eps
 #echo $BASE
 bootstrap_makefile() {
     if [ ! -e $ORG_MAKEFILE_PATH ]; then
-        echo "now downloading original makefile."
-        echo "the original makefile copyright is under Tom Bobach"
+        echo ">> now downloading original makefile."
+        echo ">> the original makefile copyright is under Tom Bobach"
         wget -q $LATEX_TEMPLATE_URI -P /tmp
-        tar xvjf /tmp/LaTeXTemplate.tar.bz2 -C /tmp
+        tar xjf /tmp/LaTeXTemplate.tar.bz2 -C /tmp
         cp /tmp/latextemplate/Makefile $ORG_MAKEFILE_PATH
         #cp $ORG_MAKEFILE_PATH $MAKEFILE_PATH
     fi
     if [ ! -e $MAKEFILE_PATH ]; then
+        echo ">> apply patch..."
         patch -p0 -d $BASE  -o ${MAKEFILE_PATH} < ${MAKEFILE_PATCH_PATH}
     fi
 }
 
-bootstrap_makefile
+setup_filesystem() {
+    local target_dir="$1"
+    mkdir -p $target_dir
+    mkdir -p $target_dir/figs
+    mkdir -p $target_dir/figs_orig
+    cp -v $MAKEFILE_PATH $target_dir/Makefile
+    cp -v $TEX_TEMPLATE $target_dir/template.tex
+    cp -v $BIB_TEMPLATE $target_dir/template.bib
+    cp -v $NOWPRINTING $target_dir/figs_orig/
+}
 
+bootstrap_makefile
+setup_filesystem $1
