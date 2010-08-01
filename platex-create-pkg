@@ -13,7 +13,7 @@ readlink_e() {
 }
 BASE=$(readlink_e)
 ORG_MAKEFILE_PATH=$BASE/Makefile.org
-MAKEFILE_PATCH_PATH=$BASE/Makefile.patch
+MAKEFILE_PATCH_PATH=$BASE/makefile.patch
 MAKEFILE_PATH=$BASE/Makefile.patched
 LATEX_TEMPLATE_URI=http://www-umlauf.informatik.uni-kl.de/~bobach/work/misc/LaTeXTemplate.tar.bz2
 TEX_TEMPLATE=$BASE/template.tex
