@@ -1,0 +1,81 @@
+% -*- coding: euc-jp-unix -*-
+\documentclass[twocolumn]{jarticle}
+\usepackage{graphicx}
+\usepackage{url}
+\begin{document}
+\title{template file for platex\_create\_pkg}
+\author{garaemon}
+\pagestyle{empty}
+\maketitle
+\thispagestyle{empty}
+\sloppy
+
+\section{はじめに}
+本ソフトウェアは新規にplatexの文章を作成するのを助けるソフトウェアです.
+この中で利用しているMakefileは, もともとTom Bobach氏によって作成されたも
+のです\cite{latex_template}. それにパッチを加えたものです. 最新版は以下
+から入手可能です\cite{platex_create_pkg}.
+\section{使い方}
+あなたの.bashrcや.zshrcなどでplatex-create-pkgにパスを通してください
+\begin{verbatim}
+export PATH=$PATH:path-to-platex-create-pkg/
+\end{verbatim}
+or
+\begin{verbatim}
+setenv PATH $PATH:path-to-platex-create-pkg
+\end{verbatim}
+
+新規にyour-awesome-paperというディレクトリに文章を作成するとしましょう.
+以下のコマンドを実行してください
+\begin{verbatim}
+$ platex-create-pkg your-awesome-paper
+\end{verbatim}
+
+your-awesome-paperディレクトリは以下のような構成になっているはずです
+\small
+\begin{verbatim}
+$ ls your-awesome-paper
+Makefile      figs/
+figs_orig/    template.bib  template.tex
+\end{verbatim}
+\normalsize
+texファイル名やbibのファイル名は適当に変更可能です. Tom氏のMakefileは自
+動でそれらを認識するので, Makefileを変更する必要はありません.
+\section{.texファイルの書き方}
+\subsection{画像}
+画像を貼り付ける場合は, \verb|figs_orig|ディレクトリに配置して以下の
+ように記述してください. 拡張子はいりません.
+\begin{verbatim}
+\begin{figure}[htb]
+ \begin{center}
+  \includegraphics[width=0.5\columnwidth]
+  {figs/nowprinting}
+  \caption{nowprinting}
+ \end{center}
+\end{figure}
+\end{verbatim}
+
+以下のように画像が表示されます.
+\begin{figure}[htb]
+ \begin{center}
+  \includegraphics[width=0.5\columnwidth]{figs/nowprinting}
+  \caption{nowprinting}
+ \end{center}
+\end{figure}
+
+\subsection{引用}
+platex-create-pkgで生成されるMakefileは\verb|\cite|がないとエラーになりま
+す.
+また, 利用されるbibファイルはtexファイルの\verb|\bibliography|に依存しま
+す.
+\subsection{include}
+texの\verb|\include|命令も適切に解釈してくれます. 
+\section{おわりに}
+機能要望があれば, githubでforkするか, ticketを切ってください.
+
+\bibliographystyle{junsrt}
+%rename here!
+\bibliography{./template}
+
+\end{document}
+
