@@ -3,3 +3,5 @@ $ export PATH=$PATH:/path-to-platex-create-pkg
 
 and just type platex-create-pkg!
 $ platex-create-pkg your-awesome-paper
+$ cd your-awesome-paper
+$ make
