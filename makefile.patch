@@ -1,0 +1,211 @@
+*** Makefile	2010-08-01 22:12:24.000000000 +0900
+--- Makefile.patched	2010-08-01 22:12:42.000000000 +0900
+***************
+*** 113,120 ****
+  LS=ls -1 --color=none
+  CP=cp
+  
+! LATEX=pdflatex -shell-escape -interaction=nonstopmode
+! BIBTEX=bibtex
+  
+  MSG_LAB_CHANGED="LaTeX Warning: Label(s) may have changed"
+  MSG_REF_UNDEFINED="LaTeX Warning: Reference.*undefined on input line.*"
+--- 113,121 ----
+  LS=ls -1 --color=none
+  CP=cp
+  
+! LATEX=platex -shell-escape -interaction=nonstopmode
+! #LATEX=platex
+! BIBTEX=jbibtex
+  
+  MSG_LAB_CHANGED="LaTeX Warning: Label(s) may have changed"
+  MSG_REF_UNDEFINED="LaTeX Warning: Reference.*undefined on input line.*"
+***************
+*** 131,137 ****
+--- 132,142 ----
+  ifneq ($(BIBFILE),.bib)
+    ifneq ($(wildcard *.bib),)
+      BBL:=$(MAINFILE:.tex=.bbl)
++   else
++     BBL:=$(BIBFILE)
+    endif
++ else
++   BBL:=$(BIBFILE)
+  endif
+  
+  ##################################################################
+***************
+*** 144,153 ****
+  
+  # the standard conversion rules are those, for postscript
+  # that changes into all->eps
+! EPS_TO=.pdf
+! PDF_TO=.pdf
+! PNG_TO=.png
+! JPG_TO=.png
+  
+  # Find all existing files of a certain type in FIGRAW that would
+  # -after conversion- be included from FIGDIR
+--- 149,162 ----
+  
+  # the standard conversion rules are those, for postscript
+  # that changes into all->eps
+! #EPS_TO=.pdf
+! EPS_TO=.eps
+! #PDF_TO=.pdf
+! PDF_TO=.eps
+! PNG_TO=.eps
+! JPG_TO=.eps
+! #DIA_TO=.pdf
+! DIA_TO=.eps
+  
+  # Find all existing files of a certain type in FIGRAW that would
+  # -after conversion- be included from FIGDIR
+***************
+*** 155,160 ****
+--- 164,170 ----
+  FIGSRCJPG=$(wildcard $(addprefix $(FIGRAW)/, $(addsuffix .jpg, $(FIGS))))
+  FIGSRCPNG=$(wildcard $(addprefix $(FIGRAW)/, $(addsuffix .png, $(FIGS))))
+  FIGSRCPDF=$(wildcard $(addprefix $(FIGRAW)/, $(addsuffix .pdf, $(FIGS))))
++ FIGSRCDIA=$(wildcard $(addprefix $(FIGRAW)/, $(addsuffix .dia, $(FIGS))))
+  FIGSRCEPST=$(wildcard $(addprefix $(FIGRAW)/, $(FIGS:.eps_t=.fig)))
+  
+  # Set up all the targets that should be created in the FIGDIR
+***************
+*** 162,171 ****
+  FIGDEPJPG=$(subst $(FIGRAW)/, $(FIGDIR)/, $(FIGSRCJPG:.jpg=$(JPG_TO)))
+  FIGDEPPNG=$(subst $(FIGRAW)/, $(FIGDIR)/, $(FIGSRCPNG:.png=$(PNG_TO)))
+  FIGDEPPDF=$(subst $(FIGRAW)/, $(FIGDIR)/, $(FIGSRCPDF:.pdf=$(PDF_TO)))
+  FIGDEPEPST=$(subst $(FIGRAW)/, $(FIGDIR)/, $(FIGSRCEPST:.fig=.eps_t))
+  
+! ALLFIGSRC=$(FIGSRCJPG) $(FIGSRCPNG) $(FIGSRCPDF) $(FIGSRCEPST) $(FIGSRCEPS)
+! ALLFIGS=$(FIGDEPJPG) $(FIGDEPPNG) $(FIGDEPPDF) $(FIGDEPEPST) $(FIGDEPEPS)
+  
+  
+  ##################################################################
+--- 172,182 ----
+  FIGDEPJPG=$(subst $(FIGRAW)/, $(FIGDIR)/, $(FIGSRCJPG:.jpg=$(JPG_TO)))
+  FIGDEPPNG=$(subst $(FIGRAW)/, $(FIGDIR)/, $(FIGSRCPNG:.png=$(PNG_TO)))
+  FIGDEPPDF=$(subst $(FIGRAW)/, $(FIGDIR)/, $(FIGSRCPDF:.pdf=$(PDF_TO)))
++ FIGDEPDIA=$(subst $(FIGRAW)/, $(FIGDIR)/, $(FIGSRCDIA:.dia=$(DIA_TO)))
+  FIGDEPEPST=$(subst $(FIGRAW)/, $(FIGDIR)/, $(FIGSRCEPST:.fig=.eps_t))
+  
+! ALLFIGSRC=$(FIGSRCJPG) $(FIGSRCPNG) $(FIGSRCPDF) $(FIGSRCEPST) $(FIGSRCEPS) $(FIGSRCDIA)
+! ALLFIGS=$(FIGDEPJPG) $(FIGDEPPNG) $(FIGDEPPDF) $(FIGDEPEPST) $(FIGDEPEPS) $(FIGDEPDIA)
+  
+  
+  ##################################################################
+***************
+*** 275,285 ****
+  # the dvi creation path invokes standard tex and requires other figures
+  $(MAINFILE:.tex=.dvi): .force
+  	$(MUTE)$(MAKE) .compilesource \
+! 		LATEX="latex -shell-escape -interaction=nonstopmode" \
+  		EPS_TO=.eps \
+  		PDF_TO=.eps \
+  		PNG_TO=.eps \
+! 		JPG_TO=.eps
+  
+  %.ps: %.dvi
+  	$(MUTE)echo "[info] Converting DVI to PS"
+--- 286,297 ----
+  # the dvi creation path invokes standard tex and requires other figures
+  $(MAINFILE:.tex=.dvi): .force
+  	$(MUTE)$(MAKE) .compilesource \
+! 		LATEX="platex -shell-escape -interaction=nonstopmode" \
+  		EPS_TO=.eps \
+  		PDF_TO=.eps \
+  		PNG_TO=.eps \
+! 		JPG_TO=.eps \
+! 		DIA_TO=.eps
+  
+  %.ps: %.dvi
+  	$(MUTE)echo "[info] Converting DVI to PS"
+***************
+*** 306,321 ****
+  	  grep "Error" $(MAINFILE:.tex=.blg) || true                 \
+  	)
+  	$(MUTE)[ -z "$(BBL)" -a -e .valid ] || [ -n "$(BBL)" -a -e .compiled ]
+  
+  .figs: $(ALLFIGS)
+  	$(MUTE)touch .figs
+  
+  clean:
+! 	$(MUTE)$(RM) .??*
+! 	$(MUTE)$(RM) *.bbl *.blg *.aux *.log
+  
+  figclean:
+! 	$(MUTE)$(RM) $(FIGDIR)/*
+  
+  veryclean: clean figclean
+  	$(MUTE)$(RM) `$(LS) | grep -v ".tex$$" |  \
+--- 318,336 ----
+  	  grep "Error" $(MAINFILE:.tex=.blg) || true                 \
+  	)
+  	$(MUTE)[ -z "$(BBL)" -a -e .valid ] || [ -n "$(BBL)" -a -e .compiled ]
++ 	$(MUTE)echo "[info] Converting DVI to PDF"
++ 	$(MUTE)dvipdfmx -o $(MAINFILE:.tex=.pdf) $(MAINFILE:.tex=.dvi) $(VERYSILENT)
+  
+  .figs: $(ALLFIGS)
+  	$(MUTE)touch .figs
+  
+  clean:
+! 	- $(MUTE)$(RM) -f *.bbl *.blg *.aux *.log
+! 	- $(MUTE)$(RM) -f *.*~
+! 	- $(MUTE)$(RM) -f .??*
+  
+  figclean:
+! 	- $(MUTE)$(RM) $(FIGDIR)/*
+  
+  veryclean: clean figclean
+  	$(MUTE)$(RM) `$(LS) | grep -v ".tex$$" |  \
+***************
+*** 356,362 ****
+  	$(MUTE)[ ! -e .compiled ] || rm .compiled
+  	$(MUTE)(                         \
+  	  echo "[info] Running BibTex" ; \
+! 	  bibtex $(MAINFILE:.tex=) $(SILENT)         \
+  	) && $(make_citations)
+  	$(MUTE) $(clear_valid)
+  
+--- 371,377 ----
+  	$(MUTE)[ ! -e .compiled ] || rm .compiled
+  	$(MUTE)(                         \
+  	  echo "[info] Running BibTex" ; \
+! 	  $(BIBTEX) $(MAINFILE:.tex=) $(SILENT)         \
+  	) && $(make_citations)
+  	$(MUTE) $(clear_valid)
+  
+***************
+*** 384,389 ****
+--- 399,407 ----
+  $(FIGDIR)/%.eps : $(FIGRAW)/%.jpg
+  	$(CONVERT) $< $@
+  
++ $(FIGDIR)/%.eps : $(FIGRAW)/%.dia
++ 	dia -e $@ $<
++ 
+  $(FIGDIR)/%.eps : $(FIGRAW)/%.pdf
+  	$(CONVERT) $< $@
+  
+***************
+*** 399,404 ****
+--- 417,425 ----
+  $(FIGDIR)/%.pdf : $(FIGRAW)/%.eps
+  	ps2pdf -dEPSCrop $< $@
+  
++ $(FIGDIR)/%.pdf : $(FIGRAW)/%.dia
++ 	dia -e $(FIGDIR)/$*.eps $<; ps2pdf -dEPSCrop $(FIGDIR)/$*.eps $@
++ 
+  $(FIGDIR)/%.pdf : $(FIGRAW)/%.pdf
+  	$(CP) $< $@
+  
+***************
+*** 431,433 ****
+--- 452,457 ----
+  	    fi                                           \
+            done                                           \
+          done
++ ARCH=$(shell uname)
++ open:
++ 	open *pdf

@@ -1,0 +1,34 @@
+#!/bin/sh
+
+set -e
+
+readlink_e() {
+    self="$0"
+    while test -h "$self"; do
+        cd "$(dirname $self)"
+        self=`readlink "$self"`
+    done
+    cd "$(dirname $self)"
+    pwd
+}
+BASE=$(readlink_e)
+ORG_MAKEFILE_PATH=$BASE/Makefile.org
+MAKEFILE_PATCH_PATH=$BASE/Makefile.patch
+MAKEFILE_PATH=$BASE/Makefile.patched
+LATEX_TEMPLATE_URI=http://www-umlauf.informatik.uni-kl.de/~bobach/work/misc/LaTeXTemplate.tar.bz2
+#echo $BASE
+bootstrap_makefile() {
+    if [ ! -e $ORG_MAKEFILE_PATH ]; then
+        echo "now downloading original makefile."
+        echo "the original makefile copyright is under Tom Bobach"
+        wget -q $LATEX_TEMPLATE_URI -P /tmp
+        tar xvjf /tmp/LaTeXTemplate.tar.bz2 -C /tmp
+        cp /tmp/latextemplate/Makefile $ORG_MAKEFILE_PATH
+    fi
+    if [ ! -e $MAKEFILE_PATH ]; then
+        patch -p0 -d $BASE < ${MAKEFILE_PATCH_PATH}
+    fi
+}
+
+bootstrap_makefile
+
